@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 
-const stuffRoutes = require('./routes/sauce');
+const saucesRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
 mongoose.connect('mongodb+srv://tipsy:tipsy@piquante.gspaxsq.mongodb.net/test',
@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-app.use('/api/stuff', stuffRoutes);
+app.use('/api/sauces', saucesRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
