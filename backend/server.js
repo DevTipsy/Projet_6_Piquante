@@ -1,3 +1,7 @@
+/****************************/
+//Demarrage d'un serveur node/
+/****************************/
+
 const http = require('http');
 const app = require('./app');
 

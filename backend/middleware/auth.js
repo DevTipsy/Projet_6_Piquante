@@ -1,3 +1,7 @@
+/***************************************/
+//Fonction vérification des identifiants/
+/***************************************/
+
 const jwt = require('jsonwebtoken');
  
 module.exports = (req, res, next) => {

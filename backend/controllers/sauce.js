@@ -1,7 +1,9 @@
 const Sauce = require('../models/Sauce');
 const fs = require('fs');
 
-
+/*****************************/
+//Fonction création de sauces//
+/*****************************/
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
   const sauce = new Sauce({
@@ -14,41 +16,50 @@ exports.createSauce = (req, res, next) => {
   });
 
   sauce.save()
-  .then(() => {res.status(201).json({message: 'Sauce ajoutée!'});})
-  .catch((error) => {res.status(400).json({error: error});});
+  .then(() => {res.status(201).json({message: 'Sauce ajoutée!'});
+  })
+  .catch((error) => {res.status(400).json({error: error});
+  });
 };
 
+/********************************************/
+//Fonction récupération de toutes les sauces//
+/********************************************/
 exports.getAllSauces = (req, res, next) => {
   Sauce.find()
-    .then((sauces) => {res.status(200).json(sauces);})
-    .catch((error) => {res.status(400).json({error: error});});
+    .then((sauces) => {res.status(200).json(sauces);
+    })
+    .catch((error) => {res.status(400).json({error: error});
+    });
 };
 
+/***********************************/
+//Fonction récupération d'une sauce//
+/***********************************/
 exports.getOneSauce = (req, res, next) => {
   Sauce.findOne({_id: req.params.id})
-    .then((sauce) => {res.status(200).json(sauce);})
-    .catch((error) => {res.status(404).json({error: error});});
+    .then((sauce) => {res.status(200).json(sauce);
+    })
+    .catch((error) => {res.status(404).json({error: error});
+    });
 };
 
-
+/************************************/
+//Fonction modification d'une sauce*//
+/************************************/
 exports.modifySauce = (req, res, next) => {
   const sauceObject = req.file ? {
     ...JSON.parse(req.body.sauce),
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
 } : {...req.body };
-  Sauce.findOne({_id: req.params.id})
-      .then(sauce => {
-        if (req.body.userId !== process.userId)  {
-          return res.status(403).json({message : 'Non autorisé'});
-        } else{
 Sauce.updateOne({ _id: req.params.id }, {...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: "Sauce modifiée" }))
     .catch(error => res.status(400).json({ error }))
-}
-      }
-)};
+};
 
-
+/**********************************/
+//Fonction suppression d'une sauce//
+/**********************************/
 exports.deleteSauce = (req, res, next) => {
   const userId = req.body.userId;
   Sauce.findOne({_id: req.params.id})
@@ -67,7 +78,9 @@ exports.deleteSauce = (req, res, next) => {
       .catch(error => res.status(500).json({error}))
 };  
 
-
+/**********************************/
+//Fonction like/dislike des sauces//
+/**********************************/
 exports.Liked = (req, res, next) => {
   switch (req.body.like) {
       case 1:
