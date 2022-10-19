@@ -1,4 +1,6 @@
+// On définit le chemin des sauces
 const Sauce = require('../models/Sauce');
+// On utilise le module nodejs pour créer et gérer des fichiers dans un programme node
 const fs = require('fs');
 
 /*****************************/
@@ -64,6 +66,7 @@ exports.deleteSauce = (req, res, next) => {
   const userId = req.body.userId;
   Sauce.findOne({_id: req.params.id})
       .then(sauce => {
+        // Comparaison des id
         if (userId !== process.userId)  {
           return res.status(403).json({message : 'Non autorisé'});
         } else{
@@ -83,6 +86,7 @@ exports.deleteSauce = (req, res, next) => {
 /**********************************/
 exports.Liked = (req, res, next) => {
   switch (req.body.like) {
+    // Dans le cas d'un like
       case 1:
           Sauce.updateOne({ _id: req.params.id }, {
               $push: { usersLiked: req.body.userId },
@@ -91,6 +95,7 @@ exports.Liked = (req, res, next) => {
               .then(() => res.status(200).json({ message: 'Objet modifié !' }))
               .catch(error => res.status(400).json({ error }))
           break
+    // Dans le cas d'un dislike
       case -1:
           Sauce.updateOne({ _id: req.params.id }, {
               $push: { usersDisliked: req.body.userId },
@@ -99,6 +104,7 @@ exports.Liked = (req, res, next) => {
               .then(() => res.status(200).json({ message: 'Objet modifié !' }))
               .catch(error => res.status(400).json({ error }))
           break
+    // Dans le cas où l'utilisateur re-clique sur like alors qu'il l'a déjà like
       case 0:
           Sauce.findOne({ _id: req.params.id })
               .then((sauce) => {
@@ -109,6 +115,7 @@ exports.Liked = (req, res, next) => {
                       })
                           .then(() => res.status(200).json({ message: 'Objet modifié !' }))
                           .catch(error => res.status(400).json({ error }))
+                // Dans le cas où l'utilisateur re-clique sur dislike alors qu'il l'a déjà dislike
                   } else if (sauce.usersDisliked.includes(req.body.userId)) {
                       Sauce.updateOne({ _id: req.params.id }, {
                           $pull: { usersDisliked: req.body.userId },
@@ -116,6 +123,7 @@ exports.Liked = (req, res, next) => {
                       })
                           .then(() => res.status(200).json({ message: 'Objet modifié !' }))
                           .catch(error => res.status(400).json({ error }))
+                // Sinon rien ne se passe=erreur
                   } else {
                       res.status(400).json({ message: 'erreur' })
                   }

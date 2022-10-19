@@ -1,3 +1,4 @@
+// On déclare la constante bcrypt User et jwt pour la sécurisation
 const bcrypt = require ('bcrypt');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
@@ -6,12 +7,14 @@ const jwt = require('jsonwebtoken');
 //Fonction création d'utilisateur avec hash du mot de passe//
 /***********************************************************/
 exports.signup = (req, res, next) => {
+    // Cyptage du mdp en une chaine de caractère
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
           email: req.body.email,
           password: hash
         });
+        // Sauvegarde de l'utilisateur
         user.save()
           .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
           .catch(error => res.status(400).json({ error }));
@@ -24,10 +27,12 @@ exports.signup = (req, res, next) => {
 /************************************************/
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
+        // Vérification que l'utilisateur existe
         .then(user => {
             if (!user) {
                 return res.status(401).json({ error: 'Utilisateur non trouvé !' });
             }
+            // Comparaison des mdp avant la connexion
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if (!valid) {

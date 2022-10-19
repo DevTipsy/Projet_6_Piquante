@@ -1,5 +1,6 @@
+// On créé l'app mongoose
 const mongoose = require('mongoose');
-
+// On définit les paramètres utilisés pour les produits
 const sauceSchema = mongoose.Schema({
   userId: { type: String, required: true, },
   name: { type: String, required: true, },
