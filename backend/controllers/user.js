@@ -2,12 +2,19 @@
 const bcrypt = require ('bcrypt');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const validator = require("validator");
 
 /***********************************************************/
 //Fonction création d'utilisateur avec hash du mot de passe//
 /***********************************************************/
 exports.signup = (req, res, next) => {
-    // Cyptage du mdp en une chaine de caractère
+    if (!validator.isEmail(req.body.email))
+    return res
+      .status(403)
+      .json({ message: "Le format du mail est incorrect." });
+  // Validator pour vérifier le format du mdp attendu
+  if (validator.isStrongPassword(req.body.password)) {
+    // Cryptage du mdp en une chaine de caractère
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
@@ -20,6 +27,11 @@ exports.signup = (req, res, next) => {
           .catch(error => res.status(400).json({ error }));
       })
       .catch(error => res.status(500).json({ error }));
+    } else
+    return res.status(403).json({
+      message:
+        "Votre mot de passe doit contenir 8 caractères minimum. Une lettre majuscule. Une lettre minuscule. Un chiffre. Un caractère spécial.",
+    });
 };
 
 /************************************************/
